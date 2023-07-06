@@ -1,21 +1,15 @@
-import useSWR from 'swr'
-import PersonComponent from '../components/Person'
-import type { Person } from '../interfaces'
+import { io } from "socket.io-client";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const socket = io("http://localhost:3001");
 
-export default function Index() {
-  const { data, error, isLoading } = useSWR<Person[]>('/api/people', fetcher)
+socket.on("connect", () => {
+  console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+});
 
-  if (error) return <div>Failed to load</div>
-  if (isLoading) return <div>Loading...</div>
-  if (!data) return null
-
+export default function Home() {
   return (
-    <ul>
-      {data.map((p) => (
-        <PersonComponent key={p.id} person={p} />
-      ))}
-    </ul>
-  )
+    <h1 className="text-3xl font-bold underline">
+      Socket.IO Status : {socket.connected ? "Connected" : "Disconnected"}
+    </h1>
+  );
 }

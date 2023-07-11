@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+  @apply bg-background; 
+  /*
+  background-image: url("/bg.gif");
+  background-repeat: no-repeat;
+  background-size: cover;
+    */
+}

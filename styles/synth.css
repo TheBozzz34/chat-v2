@@ -1,0 +1,42 @@
+section {
+  height: 100vh;
+  width: 100vw;
+  perspective: 800px;
+  overflow: hidden;
+  background-image: linear-gradient(
+    to top,
+    #0f0209,
+    #23061d,
+    #330531,
+    #3e024b,
+    #41056a,
+    #520578,
+    #640385,
+    #770092,
+    #9b0089,
+    #b8007e,
+    #ce1173,
+    #e03168
+  );
+}
+
+div {
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  height: inherit;
+  transform: rotateX(50deg);
+  transform-origin: top center;
+  animation: 5s linear infinite crawlingWall;
+  background-position-y: top;
+}
+
+@keyframes crawlingWall {
+  to {
+    background-position-y: bottom;
+  }
+}

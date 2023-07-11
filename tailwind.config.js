@@ -9,7 +9,24 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    colors: {
+      primary: "#BB86FC",
+      secondary: "#03DAC6",
+      background: "#121212",
+      surface: "#121212",
+      error: "#CF6679",
+      onPrimary: "#000000",
+      onSecondary: "#000000",
+      onBackground: "#FFFFFF",
+      onSurface: "#FFFFFF",
+      onError: "#000000",
+      text: {
+        primary: "#FFFFFF",
+        secondary: "#FFFFFF",
+        disabled: "#FFFFFF",
+        hint: "#FFFFFF",
+      },
+    },
   },
   plugins: [],
 }

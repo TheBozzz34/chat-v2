@@ -9,13 +9,11 @@ import { SiScrollreveal } from "react-icons/si";
 import io from "socket.io-client";
 import ss from "socket.io-stream";
 import ReactFileReader from "react-file-reader";
-/* cloudflare borken 
-const socket = io('https://infected.world', {
-  'path': '/ws'
-}); 
-*/
-/* production */
+/* cloudflare borken  */
+const socket = io('https://ws.infected.world', {}); 
+/* production 
 const socket = io("http://15.204.173.243:3001");
+*/
 
 /* local 
 const socket = io("http://localhost:3001");

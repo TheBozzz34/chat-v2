@@ -8,60 +8,61 @@ import {
 import { SiScrollreveal } from "react-icons/si";
 import io from "socket.io-client";
 import ss from "socket.io-stream";
-import ReactFileReader from "react-file-reader";
-/* cloudflare borken  */
-const socket = io('https://ws.infected.world', {}); 
-/* production 
-const socket = io("http://15.204.173.243:3001");
-*/
+/* cloudflare borked  */
+import { useUser } from '@auth0/nextjs-auth0/client';
+import AuthenticationButton from "../components/authentication-button";
+let server = "http://localhost:3001";
 
-/* local 
-const socket = io("http://localhost:3001");
-*/
-import { Howl, Howler } from "howler";
+const socket = io(server, {});
 
 const ChatApp = () => {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
-  const [username, setUsername] = useState("");
-  const [showOverlay, setShowOverlay] = useState(true);
-  const [showError, setShowError] = useState(false);
   const chatDivRef = useRef(null); // Ref for the chat div element
+  const [socketState, setSocketState] = useState(false);
+  const [showServerError, setShowServerError] = useState(false);
+  const [username, setUsername] = useState("");
+  const { user } = useUser();
 
-  var sound = new Howl({
-    src: ["/Mach One.opus"],
-    html5: true,
-  });
+  const env = process.env.NODE_ENV;
+
+
+  useEffect(() => {
+    if (user) {
+      socket.emit("requestUsername", user.email);
+        socket.on("sendUsername", (data) => {
+          setUsername(data);
+        });
+    }
+  }, [user]);
+
 
   useEffect(() => {
     // Listen for incoming messages
     socket.on("message", (data) => {
-      // console.log("Received message from server: " + JSON.stringify(data));
-      //Handle the received message, e.g., update the chat state
-      //console.log("Username: " + username + " Data user: " + data.user)
-      if (data.user === username) {
-        data.sentByUser = true;
-      } else {
-        data.sentByUser = false;
-      }
-      //console.log("Sent by user: " + data.sentByUser)
-
       setChat((prevState) => [...prevState, data]);
     });
 
+    socket.on("connect", () => {
+      setSocketState(socket.connected);
+      setShowServerError(false);
+    });
+
+    socket.on("disconnect", () => {
+      setSocketState(socket.connected);
+      setShowServerError(true);
+    });
+
     socket.on("image", (data) => {
-      console.log("Received image from server: " + JSON.stringify(data));
       if (matchImgurLink(data.link) !== null) {
         let setByUser = false;
-        if (data.username === username) {
-          setByUser = true;
-        }
         let message = {
           message: data.link,
           user: username,
           timestamp: new Date().getTime(),
           image: true,
           sentByUser: setByUser,
+          env: env,
         };
         message.timestamp = new Date().getTime();
         setChat((prevState) => [...prevState, message]);
@@ -85,34 +86,6 @@ const ChatApp = () => {
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
-  };
-
-  const handleUsernameChange = (event) => {
-    event.target.value = event.target.value.replace(" ", "_");
-    setUsername(event.target.value);
-    setShowError(false);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (message.trim() !== "") {
-      socket.emit("message", {
-        user: username,
-        message: message,
-        timestamp: new Date().getTime(),
-      });
-      setMessage("");
-    }
-  };
-
-  const handleUsernameSubmit = (event) => {
-    event.preventDefault();
-    if (username.trim() !== "") {
-      setShowOverlay(false); // Hide the overlay once the username is set
-      // sound.play();
-    } else {
-      setShowError(true);
-    }
   };
 
   function scrollChatDiv() {
@@ -181,52 +154,57 @@ const ChatApp = () => {
     return null;
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (message.length > 0) {
+      let setByUser = true;
+      let messageData = {
+        message: message,
+        user: username,
+        timestamp: new Date().getTime(),
+        image: false,
+        sentByUser: setByUser,
+        env: env,
+      };
+      socket.emit("message", messageData);
+      setMessage("");
+    }
+  };
+
+
   return (
     <div className="container mx-auto p-4 bg-background">
+      <div className="ml-auto bg-primary rounded">
+        <div className="text-xs text-backround mt-1 p-4">
+          WS Server status: {socketState ? "Connected" : "Disconnected"}
+          <div className="float-right text-xs text-backround">
+          <AuthenticationButton />
+        </div>  
+        </div>
+      </div>
+
       <div className="flex justify-center">
         <h1 className="text-2xl font-bold text-primary mb-4">Synthy1</h1>
       </div>
 
-      {/* Overlay */}
-      {showOverlay && (
-        <div className="overlay">
-          <div className="overlay-content shadow-md bg-surface border border-primary p-3 rounded-lg">
-            <h1 className="text-2xl font-bold text-primary mb-1">
-              Set Username
-            </h1>
-            <form onSubmit={handleUsernameSubmit}>
-              <div className="flex">
-                <input
-                  type="text"
-                  className="w-full border rounded-md p-2 focus:outline-none bg-surface text-onSurface border-primary"
-                  placeholder="Enter your username..."
-                  value={username}
-                  onChange={handleUsernameChange}
-                />
-                <button
-                  type="submit"
-                  className="bg-primary text-onPrimary font-bold rounded-md px-4 py-2 ml-2 hover:bg-opacity-90"
-                >
-                  <BsFillArrowRightSquareFill />
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {showError && (
+      {showServerError && (
         <div
           className="p-4 mb-4 text-sm text-onError rounded-lg bg-error mt-4"
           role="alert"
         >
-          <span className="font-bold">Invalid Username!</span> Change a few
-          things up and try submitting again.
+          <span className="font-bold">WS Server Disconnected!</span> This is a
+          big problem, please refresh the page or try again later.
+        </div>
+      )}
+    
+      {!user && (
+        <div className="p-4 mb-4 text-sm text-onError rounded-lg bg-error mt-4">
+          <span className="font-bold">Please login to continue!</span>
         </div>
       )}
 
       {/* Chat App */}
-      {!showOverlay && (
+      {user && (
         <div className="rounded-lg shadow-md p-4 mb-4 bg-surface border border-primary">
           <div className="mb-4"></div>
           <div
@@ -330,7 +308,38 @@ const ChatApp = () => {
             </div>
           </div>
         </div>
-      )}
+        )}
+      <div className="flex justify-center">
+        <div className="text-xs text-onBackground">
+          <a
+            href="tes"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary"
+          >
+            Synthy1
+          </a>{" "}
+          is a chat app built with{" "}
+          <a
+            href="https://nextjs.org/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary"
+          >
+            NextJS
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://socket.io/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary"
+          >
+            Socket.IO
+          </a>
+          .
+        </div>
+      </div>
     </div>
   );
 };

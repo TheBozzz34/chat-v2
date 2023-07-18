@@ -10,6 +10,7 @@ import ss from "socket.io-stream";
 /* cloudflare borked  */
 import { useUser } from "@auth0/nextjs-auth0/client";
 import AuthenticationButton from "../components/authentication-button";
+import { Helmet } from 'react-helmet';
 
 import socket from "../socket";
 
@@ -183,26 +184,35 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-background">
-      <div className="ml-auto bg-primary rounded">
-        <div className="text-xs text-backround mt-1 pt-4 pl-4 pr-4">
+    <div className="mx-auto p-4 bg-dark-tremor-custom-background h-screen w-screen">
+      <div className="ml-auto bg-dark-tremor-custom-primary rounded">
+        <div className="text-xs text-dark-tremor-custom-backround mt-1 pt-4 pl-4 pr-4">
           WS Server status: {socketState ? "Connected" : "Disconnected"}
-          <div className="float-right text-xs text-backround">
+          <div className="float-right text-xs">
             <AuthenticationButton />
+            {user && user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+              <a
+                href="/admin"
+                className="ml-2"
+              >
+                Admin
+              </a>
+
+            )}
           </div>
         </div>
-        <div className="text-xs text-backround mt-1 p-4">
+        <div className="text-xs text-dark-tremor-custom-backround mt-1 p-4">
           Commit Hash: {commitHash}
         </div>
       </div>
 
       <div className="flex justify-center">
-        <h1 className="text-2xl font-bold text-primary mb-4">Synthy1</h1>
+        <h1 className="text-2xl font-bold text-dark-tremor-custom-primary mb-4">Synthy1</h1>
       </div>
 
       {showServerError && (
         <div
-          className="p-4 mb-4 text-sm text-onError rounded-lg bg-error mt-4"
+          className="p-4 mb-4 text-sm text-dark-tremor-custom-onError rounded-lg bg-dark-tremor-custom-error mt-4"
           role="alert"
         >
           <span className="font-bold">WS Server Disconnected!</span> This is a
@@ -211,14 +221,14 @@ const ChatApp = () => {
       )}
 
       {!user && (
-        <div className="p-4 mb-4 text-sm text-onError rounded-lg bg-error mt-4">
+        <div className="p-4 mb-4 text-sm text-dark-tremor-custom-onError rounded-lg bg-error mt-4">
           <span className="font-bold">Please login to continue!</span>
         </div>
       )}
 
       {/* Chat App */}
       {user && (
-        <div className="rounded-lg shadow-md p-4 mb-4 bg-surface border border-primary">
+        <div className="rounded-lg shadow-md p-4 mb-4 bg-dark-tremor-custom-surface border border-primary">
           <div className="mb-4"></div>
           <div
             className="mb-4 h-[25vh] overflow-auto"
@@ -229,9 +239,8 @@ const ChatApp = () => {
               <div key={index} className="flex items-start mb-4">
                 <div className="flex-grow">
                   <div
-                    className={`border-b pb-2 ${
-                      msg.user === username ? "text-secondary" : "text-primary"
-                    }`}
+                    className={`border-b pb-2 ${msg.user === username ? "text-dark-tremor-custom-secondary" : "text-dark-tremor-custom-primary"
+                      }`}
                   >
                     <div className="flex items-baseline">
                       <span className="align-baseline">
@@ -247,10 +256,10 @@ const ChatApp = () => {
                       </span>
 
                       <div className="ml-auto">
-                        <div className="text-xs text-onBackground">
+                        <div className="text-xs text-dark-tremor-custom-onBackground">
                           {humanDateString(msg.timestamp)}
                         </div>
-                        <div className="text-xs text-primary mt-1">
+                        <div className="text-xs text-dark-tremor-custom-primary mt-1">
                           User: {msg.user}
                         </div>
                       </div>
@@ -265,7 +274,7 @@ const ChatApp = () => {
             <div className="flex">
               <input
                 type="text"
-                className="w-full border rounded-l-md p-2 bg-surface text-onSurface border-primary focus:outline-none"
+                className="w-full border rounded-l-md p-2 bg-dark-tremor-custom-surface text-dark-tremor-custom-onSurface border-dark-tremor-custom-primary focus:outline-none"
                 placeholder="Enter your message..."
                 value={message}
                 onChange={handleMessageChange}
@@ -273,11 +282,11 @@ const ChatApp = () => {
               />
               <button
                 type="submit"
-                className="bg-primary text-onPrimary font-bold px-4 py-2 ml-2 hover:bg-opacity-90"
+                className="bg-dark-tremor-custom-primary text-dark-tremor-custom-onPrimary font-bold px-4 py-2 ml-2 hover:bg-opacity-90"
               >
                 <BsFillArrowUpRightSquareFill />
               </button>
-              <button className="bg-primary text-onPrimary font-bold px-4 py-2 ml-2 hover:bg-opacity-90">
+              <button className="bg-dark-tremor-custom-primary text-dark-tremor-custom-onPrimary font-bold px-4 py-2 ml-2 hover:bg-opacity-90">
                 <label htmlFor="file-upload">
                   <div className="flex items-center">
                     <BsFillImageFill />
@@ -292,30 +301,30 @@ const ChatApp = () => {
               </button>
 
               <button onClick={clearChatDiv}>
-                <div className="bg-primary text-onPrimary text-2xl ml-2 p-3">
+                <div className="bg-dark-tremor-custom-primary text-dark-tremor-custom-onPrimary text-2xl ml-2 p-3">
                   <BsFillEraserFill />
                 </div>
               </button>
               <button onClick={scrollChatDiv}>
-                <div className="bg-primary text-onPrimary text-2xl ml-2 p-3 rounded-r-lg">
+                <div className="bg-dark-tremor-custom-primary text-dark-tremor-custom-onPrimary text-2xl ml-2 p-3 rounded-r-lg">
                   <SiScrollreveal />
                 </div>
               </button>
             </div>
           </form>
-          <div className="bg-primary text-onPrimary mt-2 p-3 rounded-lg flex justify-between">
+          <div className="bg-dark-tremor-custom-primary text-dark-tremor-custom-onPrimary mt-2 p-3 rounded-lg flex justify-between">
             <div>Username: {username}</div>
             <div className="flex items-center">
               <div className="flex items-center mr-1">
                 <BsFillArrowUpRightSquareFill className="mr-1" /> Send Chat
               </div>
-              <div className="flex items-center ml-2 border-l mr-2">
+              <div className="flex items-center ml-2 border-l mr-2 border-dark-tremor-custom-onPrimary">
                 <BsFillImageFill className="mr-1 ml-1" /> Send Image
               </div>
-              <div className="flex items-center border-l">
+              <div className="flex items-center border-l border-dark-tremor-custom-onPrimary">
                 <BsFillEraserFill className="ml-1 mr-1" /> Clear Chat
               </div>
-              <div className="flex items-center ml-2 border-l">
+              <div className="flex items-center ml-2 border-l border-dark-tremor-custom-onPrimary">
                 <SiScrollreveal className="mr-1 ml-1" /> Scroll
               </div>
             </div>
@@ -323,12 +332,12 @@ const ChatApp = () => {
         </div>
       )}
       <div className="flex justify-center">
-        <div className="text-xs text-onBackground">
+        <div className="text-xs text-dark-tremor-custom-onBackground">
           <a
             href="tes"
             target="_blank"
             rel="noreferrer"
-            className="text-primary"
+            className="text-dark-tremor-custom-primary"
           >
             Synthy1
           </a>{" "}
@@ -337,7 +346,7 @@ const ChatApp = () => {
             href="https://nextjs.org/"
             target="_blank"
             rel="noreferrer"
-            className="text-primary"
+            className="text-dark-tremor-custom-primary"
           >
             NextJS
           </a>{" "}
@@ -346,7 +355,7 @@ const ChatApp = () => {
             href="https://socket.io/"
             target="_blank"
             rel="noreferrer"
-            className="text-primary"
+            className="text-dark-tremor-custom-primary"
           >
             Socket.IO
           </a>

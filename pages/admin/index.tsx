@@ -48,6 +48,9 @@ export default function DashboardExample() {
 
     function requestLogs() {
         socket.emit("requestLogs");
+        socket.on("sendLogs", (data) => {
+            window.open("http://localhost:3002/api/export");
+        });
     }
 
     function sendMessage() {
@@ -139,7 +142,8 @@ export default function DashboardExample() {
 
     if (user && user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
         return (
-            <main className="px-12 py-12">
+            <div className = "h-screen bg-dark-tremor-background">
+            <main className="px-12 py-12 bg-dark-tremor-background">
                 <Title className="font-medium text-dark-tremor-title text-dark-tremor-content-emphasis">
                     Synthy1 Dashboard
                 </Title>
@@ -150,7 +154,7 @@ export default function DashboardExample() {
                 <div className="mt-6">
                     <Button className="mr-4" onClick={openAuth0}>Create New User</Button>
                     <Button className="mr-4" onClick={() => setShowMessageModal(true)}>Send Message</Button>
-                    <Button className="mr-4" onClick={() => requestLogs}>Export Logs</Button>
+                    <Button className="mr-4" onClick={() => requestLogs()}>Export Logs</Button>
                     <Button className="mr-4" onClick={refreshData}>Refresh Data Manually</Button>
                 </div>
 
@@ -323,6 +327,7 @@ export default function DashboardExample() {
                     </div>
                 </div>
             </main>
+            </div>
         );
     } else {
         return (

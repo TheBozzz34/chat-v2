@@ -46,6 +46,24 @@ module.exports = {
             emphasis: "#f87171", // red-400
             strong: "#fde8e8", // red-50
           },
+          custom: {
+            primary: "#BB86FC",
+            secondary: "#03DAC6",
+            background: "#121212",
+            surface: "#121212",
+            error: "#CF6679",
+            onPrimary: "#000000",
+            onSecondary: "#000000",
+            onBackground: "#FFFFFF",
+            onSurface: "#FFFFFF",
+            onError: "#000000",
+            text: {
+              primary: "#FFFFFF",
+              secondary: "#FFFFFF",
+              disabled: "#FFFFFF",
+              hint: "#FFFFFF",
+            },
+          }
         },
       },
       boxShadow: {

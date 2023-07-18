@@ -8,9 +8,11 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.0",
     "@auth0/nextjs-auth0": "^2.6.3",
+    "@heroicons/react": "^2.0.18",
     "@mantine/prism": "^6.0.16",
     "@react-three/drei": "^9.78.1",
     "@react-three/fiber": "^8.13.4",
+    "@tremor/react": "^3.4.1",
     "@types/three": "^0.153.0",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",

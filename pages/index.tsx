@@ -6,14 +6,12 @@ import {
   BsFillImageFill,
 } from "react-icons/bs";
 import { SiScrollreveal } from "react-icons/si";
-import io from "socket.io-client";
 import ss from "socket.io-stream";
 /* cloudflare borked  */
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from "@auth0/nextjs-auth0/client";
 import AuthenticationButton from "../components/authentication-button";
-let server = "http://localhost:3001";
 
-const socket = io(server, {});
+import socket from "../socket";
 
 const ChatApp = () => {
   const [message, setMessage] = useState("");
@@ -23,31 +21,36 @@ const ChatApp = () => {
   const [showServerError, setShowServerError] = useState(false);
   const [username, setUsername] = useState("");
   const { user } = useUser();
+  const [commitHash, setCommitHash] = useState("");
 
   const env = process.env.NODE_ENV;
-
 
   useEffect(() => {
     if (user) {
       socket.emit("requestUsername", user.email);
-  
+
       const handleUsername = (data) => {
         setUsername(data);
       };
-  
+
       socket.once("sendUsername", handleUsername);
-  
+
       return () => {
         socket.off("sendUsername", handleUsername);
       };
     }
   }, [user]);
-  
 
   useEffect(() => {
     // Listen for incoming messages
     socket.on("message", (data) => {
       setChat((prevState) => [...prevState, data]);
+    });
+
+    socket.emit("requestVersion");
+
+    socket.on("version", (data) => {
+      setCommitHash(data);
     });
 
     socket.on("connect", () => {
@@ -59,6 +62,7 @@ const ChatApp = () => {
       setSocketState(socket.connected);
       setShowServerError(true);
     });
+
 
     socket.on("image", (data) => {
       if (matchImgurLink(data.link) !== null) {
@@ -178,15 +182,17 @@ const ChatApp = () => {
     }
   };
 
-
   return (
     <div className="container mx-auto p-4 bg-background">
       <div className="ml-auto bg-primary rounded">
-        <div className="text-xs text-backround mt-1 p-4">
+        <div className="text-xs text-backround mt-1 pt-4 pl-4 pr-4">
           WS Server status: {socketState ? "Connected" : "Disconnected"}
           <div className="float-right text-xs text-backround">
-         <AuthenticationButton /> 
-        </div>  
+            <AuthenticationButton />
+          </div>
+        </div>
+        <div className="text-xs text-backround mt-1 p-4">
+          Commit Hash: {commitHash}
         </div>
       </div>
 
@@ -203,7 +209,7 @@ const ChatApp = () => {
           big problem, please refresh the page or try again later.
         </div>
       )}
-    
+
       {!user && (
         <div className="p-4 mb-4 text-sm text-onError rounded-lg bg-error mt-4">
           <span className="font-bold">Please login to continue!</span>
@@ -224,7 +230,7 @@ const ChatApp = () => {
                 <div className="flex-grow">
                   <div
                     className={`border-b pb-2 ${
-                      msg.sentByUser ? "text-secondary" : "text-primary"
+                      msg.user === username ? "text-secondary" : "text-primary"
                     }`}
                   >
                     <div className="flex items-baseline">
@@ -315,7 +321,7 @@ const ChatApp = () => {
             </div>
           </div>
         </div>
-        )}
+      )}
       <div className="flex justify-center">
         <div className="text-xs text-onBackground">
           <a

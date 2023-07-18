@@ -1,1 +1,4 @@
-A chat app
+## A simple webchat software powered by [Socket.IO](https://socket.io/), [NextJS](https://nextjs.org/) and [Auth0](https://auth0.com).
+
+Backend is currently closed source
+

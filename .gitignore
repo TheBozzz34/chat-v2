@@ -40,3 +40,5 @@ out.tar.gz
 
 config.json
 token.json
+server/config.json
+server/debug.log

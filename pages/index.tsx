@@ -178,7 +178,8 @@ const ChatApp = () => {
         <div className="text-xs text-backround mt-1 p-4">
           WS Server status: {socketState ? "Connected" : "Disconnected"}
           <div className="float-right text-xs text-backround">
-          <AuthenticationButton />
+         {/* <AuthenticationButton /> */}
+         Currently disabvled for maintenance
         </div>  
         </div>
       </div>

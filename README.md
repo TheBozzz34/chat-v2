@@ -2,3 +2,5 @@
 
 Backend is currently closed source
 
+# Public instance at [catgirlsaresexy.org](https://catgirlsaresexy.org)
+

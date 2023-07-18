@@ -9,16 +9,16 @@ const Signup = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [showSuccessBox, setShowSuccessBox] = useState(false);
 
-    socket.on("signupResponse", (data) => {
+    socket.on("signupSuccess", () => {
+        setShowSuccessBox(true);
+        setShowErrorBox(false);
+    });
+
+    socket.on("signupError", (data) => {
+        setShowErrorBox(true);
+        setShowSuccessBox(false);
         console.log(data);
-        if (data.success) {
-            setShowSuccessBox(true);
-            setShowErrorBox(false);
-        } else {
-            setShowErrorBox(true);
-            setErrorMessage(data.message);
-            setShowErrorBox(true);
-        }
+        setErrorMessage(data);
     });
 
     const initialValues = {

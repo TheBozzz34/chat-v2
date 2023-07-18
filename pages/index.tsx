@@ -30,12 +30,19 @@ const ChatApp = () => {
   useEffect(() => {
     if (user) {
       socket.emit("requestUsername", user.email);
-        socket.on("sendUsername", (data) => {
-          setUsername(data);
-        });
+  
+      const handleUsername = (data) => {
+        setUsername(data);
+      };
+  
+      socket.once("sendUsername", handleUsername);
+  
+      return () => {
+        socket.off("sendUsername", handleUsername);
+      };
     }
   }, [user]);
-
+  
 
   useEffect(() => {
     // Listen for incoming messages
@@ -178,8 +185,7 @@ const ChatApp = () => {
         <div className="text-xs text-backround mt-1 p-4">
           WS Server status: {socketState ? "Connected" : "Disconnected"}
           <div className="float-right text-xs text-backround">
-         {/* <AuthenticationButton /> */}
-         Currently disabvled for maintenance
+         <AuthenticationButton /> 
         </div>  
         </div>
       </div>

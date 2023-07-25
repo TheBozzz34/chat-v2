@@ -8,8 +8,11 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.0",
     "@auth0/nextjs-auth0": "^2.6.3",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@heroicons/react": "^2.0.18",
     "@mantine/prism": "^6.0.16",
+    "@mui/material": "^5.14.1",
     "@react-three/drei": "^9.78.1",
     "@react-three/fiber": "^8.13.4",
     "@tremor/react": "^3.4.1",

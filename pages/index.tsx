@@ -13,6 +13,7 @@ import AuthenticationButton from "../components/authentication-button";
 import { Helmet } from 'react-helmet';
 
 import socket from "../socket";
+import Link from "next/link";
 
 const ChatApp = () => {
   const [message, setMessage] = useState("");
@@ -189,7 +190,7 @@ const ChatApp = () => {
         <div className="text-xs text-dark-tremor-custom-backround mt-1 pt-4 pl-4 pr-4">
           WS Server status: {socketState ? "Connected" : "Disconnected"}
           <div className="float-right text-xs">
-            <AuthenticationButton />
+            <AuthenticationButton /> |{" "} <Link href="/profile"><span>Profile</span></Link>
             {user && user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
               <a
                 href="/admin"
@@ -260,7 +261,7 @@ const ChatApp = () => {
                           {humanDateString(msg.timestamp)}
                         </div>
                         <div className="text-xs text-dark-tremor-custom-primary mt-1">
-                          User: {msg.user}
+                          User: <Link href={`/user/${msg.user}`}>{msg.user}</Link>
                         </div>
                       </div>
                     </div>
